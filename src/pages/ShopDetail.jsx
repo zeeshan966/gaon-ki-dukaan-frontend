@@ -38,14 +38,14 @@ export default function ShopDetail() {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = "en-IN"; // Mixed Hindi/English support
+    recognition.lang = "en-IN"; 
     recognition.interimResults = false;
 
     recognition.onstart = () => setIsListening(true);
     
     recognition.onresult = (event) => {
       let transcript = event.results[0][0].transcript;
-      transcript = transcript.replace(/[.]/g, ""); // Cleaning
+      transcript = transcript.replace(/[.]/g, ""); 
       setSearchQuery(transcript);
       setIsListening(false);
     };
@@ -73,7 +73,7 @@ export default function ShopDetail() {
       <div className="fixed top-[-5%] left-[-5%] w-[35%] h-[35%] bg-blue-500/5 blur-[120px] rounded-full z-0 pointer-events-none"></div>
       <div className="fixed bottom-[-5%] right-[-5%] w-[35%] h-[35%] bg-purple-500/5 blur-[120px] rounded-full z-0 pointer-events-none"></div>
 
-      <div className="max-w-2xl mx-auto relative z-10 space-y-6">
+      <div className="max-w-4xl mx-auto relative z-10 space-y-6">
         
         {/* TOP NAVIGATION BACK BUTTON */}
         <button 
@@ -89,7 +89,6 @@ export default function ShopDetail() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white/70 backdrop-blur-md border border-white/80 p-8 rounded-[2.5rem] relative overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.02)]"
         >
-          {/* Top Elegant Color Accent Bar */}
           <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
           
           <div className="absolute top-0 right-0 p-8 text-slate-100 pointer-events-none">
@@ -110,7 +109,7 @@ export default function ShopDetail() {
               {shop?.isOpen ? (
                 <>
                   <span className="text-emerald-500">●</span> Currently Accepting Orders
-                </>
+                </                >
               ) : (
                 <>
                   <span className="text-rose-500">○</span> Closed for now
@@ -120,7 +119,7 @@ export default function ShopDetail() {
           </div>
         </motion.div>
 
-        {/* --- 🔥 1.5 DYNAMIC OFFERS SECTION (IF LIVE) --- */}
+        {/* --- 🔥 1.5 DYNAMIC OFFERS SECTION --- */}
         {shop?.offers?.isActive && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -168,77 +167,89 @@ export default function ShopDetail() {
           </button>
         </div>
 
-        {/* --- 3. LIVE MENU/INVENTORY LIST --- */}
-        <div className="space-y-3.5">
+        {/* --- 3. LIVE MENU/INVENTORY CARDS GRID --- */}
+        <div className="space-y-4">
           <div className="flex justify-between items-center px-2">
             <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
               {searchQuery ? `Matching Results (${filteredItems.length})` : 'Live Menu'}
             </h2>
           </div>
 
-          <div className="grid gap-3">
-            <AnimatePresence mode="popLayout">
-              {filteredItems.length > 0 ? (
-                filteredItems.map((item) => (
+          <AnimatePresence mode="popLayout">
+            {filteredItems.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {filteredItems.map((item) => (
                   <motion.div 
                     layout
-                    initial={{ opacity: 0, scale: 0.98 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
                     key={item._id}
-                    className={`group flex items-center justify-between p-4 px-6 rounded-2xl border transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] ${
+                    className={`group flex flex-col justify-between p-5 rounded-[2rem] border transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.01)] ${
                       item.isAvailable 
-                      ? 'bg-white/70 border-slate-200/80 hover:border-blue-400 hover:shadow-md' 
+                      ? 'bg-white/70 border-slate-200/80 hover:border-blue-400 hover:shadow-xl' 
                       : 'bg-slate-100/60 border-slate-200 opacity-60'
                     }`}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center border transition-all ${
-                        item.isAvailable 
-                        ? 'text-blue-600 border-blue-100 bg-blue-50 group-hover:bg-blue-600 group-hover:text-white' 
-                        : 'text-slate-400 border-slate-200 bg-slate-50'
-                      }`}>
-                        <FaShoppingCart size={15} />
-                      </div>
-                      <div>
-                        <h3 className={`font-bold text-sm tracking-tight transition-colors ${item.isAvailable ? 'text-slate-800 group-hover:text-blue-600' : 'text-slate-400 line-through'}`}>
-                          {item.itemName}
-                        </h3>
-                        
-                        {/* --- 💎 PREMIUM DYNAMIC PRICE PER UNIT DISPLAY --- */}
-                        <div className="flex items-baseline gap-1 mt-0.5">
-                          <span className="font-black text-sm text-blue-600 font-mono">
-                            ₹{item.price}
-                          </span>
-                          <span className="text-[10px] text-slate-400 font-bold tracking-tight">
-                            / {item.unit || "piece"}
+                    {/* Item Upper Header */}
+                    <div className="flex items-start justify-between gap-3 mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center border transition-all flex-shrink-0 ${
+                          item.isAvailable 
+                          ? 'text-blue-600 border-blue-100 bg-blue-50 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white' 
+                          : 'text-slate-400 border-slate-200 bg-slate-50'
+                        }`}>
+                          <FaShoppingCart size={15} />
+                        </div>
+                        <div>
+                          <h3 className={`font-black text-base tracking-tight transition-colors line-clamp-1 ${
+                            item.isAvailable ? 'text-slate-800 group-hover:text-blue-600' : 'text-slate-400 line-through'
+                          }`}>
+                            {item.itemName}
+                          </h3>
+                          <span className="inline-block mt-0.5 text-[8px] font-mono tracking-widest uppercase bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md border border-slate-200">
+                            {item.unit || 'piece'}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.15em] border shadow-sm ${
-                      item.isAvailable 
-                      ? 'text-emerald-600 border-emerald-200 bg-emerald-50' 
-                      : 'text-rose-500 border-rose-200 bg-rose-50'
-                    }`}>
-                      {item.isAvailable ? "Available" : "Sold Out"}
+                    {/* --- 💎 PREMIUM BOLD PRICE BLOCK --- */}
+                    <div className="bg-slate-50/50 border border-slate-100 p-3 rounded-xl flex items-baseline justify-between mt-auto">
+                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Price:</span>
+                      <p className="font-black text-2xl text-blue-600 font-mono tracking-tight">
+                        ₹{item.price}
+                        <span className="text-xs text-slate-400 font-normal lowercase font-sans ml-1">
+                          /{item.unit || 'piece'}
+                        </span>
+                      </p>
+                    </div>
+
+                    {/* Status Badge Footer */}
+                    <div className="mt-3 pt-2 border-t border-slate-100/70 flex items-center justify-end">
+                      <div className={`px-3 py-1 rounded-xl text-[8px] font-black uppercase tracking-[0.15em] border shadow-sm ${
+                        item.isAvailable 
+                        ? 'text-emerald-600 border-emerald-200 bg-emerald-50' 
+                        : 'text-rose-500 border-rose-200 bg-rose-50'
+                      }`}>
+                        {item.isAvailable ? "Available" : "Sold Out"}
+                      </div>
                     </div>
                   </motion.div>
-                ))
-              ) : (
-                <motion.div 
-                  initial={{ opacity: 0 }} 
-                  animate={{ opacity: 1 }} 
-                  className="text-center py-16 bg-white/40 rounded-[2.5rem] border border-dashed border-slate-200"
-                >
-                  <FaBoxOpen className="mx-auto text-slate-300 mb-3" size={36} />
-                  <p className="text-slate-400 text-[9px] font-black uppercase tracking-[0.25em]">Oops! Item nahi mila</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+                ))}
+              </div>
+            ) : (
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                className="text-center py-16 bg-white/40 rounded-[2.5rem] border border-dashed border-slate-200"
+              >
+                <FaBoxOpen className="mx-auto text-slate-300 mb-3" size={36} />
+                <p className="text-slate-400 text-[9px] font-black uppercase tracking-[0.25em]">Oops! Item nahi mila</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
       </div>
