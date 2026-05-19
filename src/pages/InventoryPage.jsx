@@ -70,7 +70,7 @@ export default function InventoryPage() {
     price: "", 
     category: "General", 
     isAvailable: true,
-    unit: "piece" // Handled dynamically in useEffect below
+    unit: "piece" 
   });
 
   // Automatically update default dynamic unit once shop loads successfully
@@ -181,7 +181,7 @@ export default function InventoryPage() {
     try {
       const payload = {
         ...editingItem,
-        price: Number(editingItem.price) // Parse explicitly to number
+        price: Number(editingItem.price) 
       };
       await API.put(`/shops/${id}/items/${editingItem._id}`, payload);
       setItems(items.map(item => item._id === editingItem._id ? payload : item));
@@ -194,7 +194,7 @@ export default function InventoryPage() {
     try {
       const payload = {
         ...newItem,
-        price: Number(newItem.price) // Save explicitly as number datatype
+        price: Number(newItem.price) 
       };
       const { data } = await API.post(`/shops/${id}/items`, payload);
       setItems(prev => [...prev, data]);
@@ -225,7 +225,7 @@ export default function InventoryPage() {
       {/* Background Soft Glow */}
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-blue-500/5 blur-[100px] rounded-full -z-10 pointer-events-none" />
 
-      <div className="max-w-2xl mx-auto flex flex-col gap-6">
+      <div className="max-w-4xl mx-auto flex flex-col gap-6">
         
         {/* --- 1. TOP SHOP DETAILS CARD --- */}
         <motion.div 
@@ -295,7 +295,6 @@ export default function InventoryPage() {
               onSubmit={handleAddItem} 
               className="overflow-hidden flex flex-col gap-4 bg-white/70 border border-white/80 backdrop-blur-md rounded-[2.5rem] p-6 shadow-sm"
             >
-              {/* ITEM DESIGNATION NAME INPUT */}
               <div className="flex flex-col gap-1.5 group/field">
                 <label className="text-[9px] font-black text-slate-400 uppercase ml-2 transition-colors group-focus-within/field:text-blue-600">Item Designation</label>
                 <div className="relative">
@@ -311,7 +310,6 @@ export default function InventoryPage() {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* PRICE INPUT */}
                 <div className="flex flex-col gap-1.5 group/field">
                   <label className="text-[9px] font-black text-slate-400 uppercase ml-2 transition-colors group-focus-within/field:text-purple-600">
                     {currentConfig.priceLabel}
@@ -329,7 +327,6 @@ export default function InventoryPage() {
                   </div>
                 </div>
 
-                {/* DYNAMIC MEASUREMENT UNIT SELECT DROPDOWN */}
                 <div className="flex flex-col gap-1.5 group/field">
                   <label className="text-[9px] font-black text-slate-400 uppercase ml-2 transition-colors group-focus-within/field:text-amber-500">Measurement Scale Unit</label>
                   <select 
@@ -354,7 +351,7 @@ export default function InventoryPage() {
           )}
         </AnimatePresence>
 
-        {/* --- 4. LIVE INVENTORY MANAGEMENT LIST --- */}
+        {/* --- 4. LIVE INVENTORY MANAGEMENT CARDS GRID --- */}
         <div className="flex flex-col gap-3">
           <div className="px-2">
             <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
@@ -363,37 +360,71 @@ export default function InventoryPage() {
           </div>
           
           {filteredItems.length > 0 ? (
-            filteredItems.map((item) => (
-              <motion.div 
-                layout 
-                key={item._id} 
-                className={`group flex items-center justify-between p-4 px-5 rounded-2xl border transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] ${item.isAvailable ? 'bg-white/70 border-slate-200/80 hover:border-blue-400 hover:shadow-md' : 'bg-slate-100/60 border-slate-200 opacity-60'}`}
-              >
-                <div className="flex items-center gap-4">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${item.isAvailable ? 'text-blue-600 border-blue-100 bg-blue-50' : 'text-slate-400 border-slate-200 bg-slate-50'}`}>
-                    <FaBoxOpen size={15} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {filteredItems.map((item) => (
+                <motion.div 
+                  layout 
+                  key={item._id} 
+                  className={`group flex flex-col justify-between p-5 rounded-[2rem] border transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.01)] ${item.isAvailable ? 'bg-white/70 border-slate-200/80 hover:border-blue-400 hover:shadow-xl' : 'bg-slate-100/60 border-slate-200 opacity-60'}`}
+                >
+                  {/* Card Header Info */}
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center border transition-all flex-shrink-0 ${item.isAvailable ? 'text-blue-600 border-blue-100 bg-blue-50 group-hover:scale-110' : 'text-slate-400 border-slate-200 bg-slate-50'}`}>
+                        <FaBoxOpen size={16} />
+                      </div>
+                      <div>
+                        <h3 className={`font-black text-base tracking-tight transition-colors line-clamp-1 ${item.isAvailable ? 'text-slate-800 group-hover:text-blue-600' : 'text-slate-400 line-through'}`}>
+                          {item.itemName}
+                        </h3>
+                        <span className="text-[8px] font-mono tracking-widest uppercase bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md border border-slate-200">
+                          {item.unit || 'piece'}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className={`font-bold text-sm tracking-tight transition-colors ${item.isAvailable ? 'text-slate-800 group-hover:text-blue-600' : 'text-slate-400 line-through'}`}>{item.itemName}</h3>
-                    {/* DISPLAY DYNAMIC PRICING AND UNIT */}
-                    <p className="font-black text-[11px] text-blue-600 font-mono">
-                      ₹{formatPrice(item.price)} <span className="text-[9px] text-slate-400 lowercase font-sans">/ {item.unit || 'piece'}</span>
+
+                  {/* Card Pricing Body */}
+                  <div className="bg-slate-50/50 border border-slate-100 p-3 rounded-xl mb-4 flex items-baseline justify-between">
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Rate:</span>
+                    {/* Price Bolder Integration */}
+                    <p className="font-black text-xl text-blue-600 font-mono tracking-tight">
+                      ₹{formatPrice(item.price)}
+                      <span className="text-[10px] text-slate-400 font-normal lowercase font-sans ml-0.5">
+                        /{item.unit || 'piece'}
+                      </span>
                     </p>
                   </div>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <button 
-                    onClick={() => toggleStatus(item._id, item.isAvailable)} 
-                    className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border transition-all shadow-sm ${item.isAvailable ? 'text-emerald-600 border-emerald-200 bg-emerald-50 hover:bg-emerald-600 hover:text-white' : 'text-rose-500 border-rose-200 bg-rose-50 hover:bg-rose-600 hover:text-white'}`}
-                  >
-                    {item.isAvailable ? "In Stock" : "Out of Stock"}
-                  </button>
-                  <button onClick={() => setEditingItem(item)} className="p-2.5 bg-white text-slate-400 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all border border-slate-200 shadow-sm"><FaEdit size={13}/></button>
-                  <button onClick={() => handleDelete(item._id)} className="p-2.5 bg-white text-slate-400 rounded-lg hover:bg-rose-50 hover:text-rose-600 transition-all border border-slate-200 shadow-sm"><FaTrash size={13}/></button>
-                </div>
-              </motion.div>
-            ))
+                  
+                  {/* Card Action Controls */}
+                  <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100/70">
+                    <button 
+                      onClick={() => toggleStatus(item._id, item.isAvailable)} 
+                      className={`px-3 py-2 rounded-xl text-[9px] font-black uppercase border transition-all shadow-sm flex-grow ${item.isAvailable ? 'text-emerald-600 border-emerald-200 bg-emerald-50 hover:bg-emerald-600 hover:text-white' : 'text-rose-500 border-rose-200 bg-rose-50 hover:bg-rose-600 hover:text-white'}`}
+                    >
+                      {item.isAvailable ? "In Stock" : "Out of Stock"}
+                    </button>
+                    
+                    <div className="flex gap-1.5">
+                      <button 
+                        onClick={() => setEditingItem(item)} 
+                        className="p-2.5 bg-white text-slate-400 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all border border-slate-200 shadow-sm"
+                        title="Edit Item"
+                      >
+                        <FaEdit size={12}/>
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(item._id)} 
+                        className="p-2.5 bg-white text-slate-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 transition-all border border-slate-200 shadow-sm"
+                        title="Delete Item"
+                      >
+                        <FaTrash size={12}/>
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           ) : (
             <div className="text-center py-16 bg-white/40 rounded-[2.5rem] border border-dashed border-slate-200">
               <p className="text-slate-400 text-[9px] font-black uppercase tracking-[0.25em]">No items found in stock</p>
@@ -420,7 +451,6 @@ export default function InventoryPage() {
               </div>
 
               <form onSubmit={handleUpdateItem} className="flex flex-col gap-4">
-                {/* ITEM NAME EDIT */}
                 <div className="relative group/modal">
                   <input 
                     value={editingItem.itemName} 
@@ -430,7 +460,6 @@ export default function InventoryPage() {
                   <button type="button" onClick={() => handleVoiceInput("itemName")} className={`absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg ${isListening === "itemName" ? "text-rose-500 animate-pulse" : "text-blue-500"}`}><FaMicrophone size={12} /></button>
                 </div>
                 
-                {/* PRICE EDIT */}
                 <div className="relative group/modal">
                   <input 
                     type="number"
@@ -441,7 +470,6 @@ export default function InventoryPage() {
                   <button type="button" onClick={() => handleVoiceInput("price")} className={`absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg ${isListening === "price" ? "text-rose-500 animate-pulse" : "text-purple-500"}`}><FaMicrophone size={12} /></button>
                 </div>
 
-                {/* MODAL EDIT DROPDOWN FOR UNIT */}
                 <div className="flex flex-col gap-1">
                   <select 
                     value={editingItem.unit || currentConfig.defaultUnit}
