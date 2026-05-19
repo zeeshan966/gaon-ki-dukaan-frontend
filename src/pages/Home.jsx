@@ -218,6 +218,18 @@ export default function Home() {
               {filteredShops.map((shop) => {
                 const isOfferActive = shop.offers?.isActive && shop.offers?.discountText;
 
+                // 🛠️ LIVE ON-THE-FLY IMAGE URL RESOLVER
+                let finalImageUrl = "";
+                if (shop.shopImage) {
+                  if (shop.shopImage.includes("localhost:5000")) {
+                    finalImageUrl = shop.shopImage.replace("http://localhost:5000", "https://gaon-ki-dukaan-backend.onrender.com");
+                  } else if (shop.shopImage.startsWith("http")) {
+                    finalImageUrl = shop.shopImage;
+                  } else {
+                    finalImageUrl = `https://gaon-ki-dukaan-backend.onrender.com${shop.shopImage.startsWith('/') ? '' : '/'}${shop.shopImage}`;
+                  }
+                }
+
                 return (
                   <motion.div 
                     key={shop._id} 
@@ -277,11 +289,16 @@ export default function Home() {
                       
                       {/* IMAGE WITH SPECULAR GLOW BORDER */}
                       <div className={`w-24 h-24 bg-gradient-to-b from-white to-slate-100 border-2 border-white rounded-full flex items-center justify-center text-4xl shadow-[0_4px_12px_rgba(0,0,0,0.08),_inset_0_2px_4px_rgba(0,0,0,0.06)] overflow-hidden transition-transform duration-300 ${isCustomer && 'group-hover:scale-105'} ${isOfferActive ? 'ring-4 ring-amber-500/20' : ''}`}>
-                        {shop.shopImage ? (
+                        {finalImageUrl ? (
                           <img 
-                            src={import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${shop.shopImage}` : `http://localhost:5000${shop.shopImage}`} 
+                            src={finalImageUrl} 
                             alt={shop.shopName} 
                             className="w-full h-full object-cover"
+                            onError={(e) => {
+                              // If image fails, fallback to rendering the category icon text dynamically
+                              e.target.style.display = 'none';
+                              e.target.parentNode.innerHTML = getCategoryIcon(shop.category);
+                            }}
                           />
                         ) : (
                           getCategoryIcon(shop.category)
