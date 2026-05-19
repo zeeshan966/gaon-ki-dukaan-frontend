@@ -17,53 +17,55 @@ export default function Home() {
   const isShopkeeper = userRole === 'shopkeeper';
   const isCustomer = !isAdmin && !isShopkeeper;
 
-  // --- 🛠️ UNIVERSAL RURAL CATEGORY ICONS MAPPING ---
+  // --- 🛠️ UNIVERSAL RURAL CATEGORY ICONS MAPPING (Hindi + English Support) ---
   const getCategoryIcon = (category) => {
     const cat = category?.toLowerCase() || '';
-    if (cat.includes('kirana') || cat.includes('grocery') || cat.includes('store')) return '🌾';
-    if (cat.includes('medical') || cat.includes('medicine') || cat.includes('doctor')) return '🏥';
-    if (cat.includes('salon') || cat.includes('parlour') || cat.includes('barber')) return '✂️';
-    if (cat.includes('electronic') || cat.includes('bijli') || cat.includes('mobile')) return '⚡';
-    if (cat.includes('garment') || cat.includes('kapde') || cat.includes('cloth')) return '👕';
+    if (cat.includes('kirana') || cat.includes('grocery') || cat.includes('store') || cat.includes('किराना')) return '🌾';
+    if (cat.includes('medical') || cat.includes('medicine') || cat.includes('doctor') || cat.includes('मेडिकल') || cat.includes('दवाई')) return '🏥';
+    if (cat.includes('salon') || cat.includes('parlour') || cat.includes('barber') || cat.includes('नाई')) return '✂️';
+    if (cat.includes('electronic') || cat.includes('bijli') || cat.includes('mobile') || cat.includes('बिजली')) return '⚡';
+    if (cat.includes('garment') || cat.includes('kapde') || cat.includes('cloth') || cat.includes('कपड़े')) return '👕';
     return '🏪'; 
   };
 
-  // --- 🎤 DYNAMIC VOICE SEARCH ---
+  // --- 🎤 DYNAMIC HINDI/HINGLISH VOICE SEARCH ---
   const startVoiceSearch = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("Your browser does not support voice search. Please use Chrome.");
+      alert("आपके ब्राउज़र में वॉइस सर्च सपोर्ट नहीं है। कृपया गूगल क्रोम (Chrome) का उपयोग करें।");
       return;
     }
     const recognition = new SpeechRecognition();
-    recognition.lang = 'en-IN'; 
+    recognition.lang = 'hi-IN'; // 🇮🇳 Hindi and Hinglish locale
     recognition.interimResults = false;
     recognition.onstart = () => setIsListening(true);
     recognition.onend = () => setIsListening(false);
     recognition.onresult = (event) => {
       let transcript = event.results[0][0].transcript;
+      // Clean dots, trim spaces, and lowercase the text for matching
       const cleanText = transcript.replace(/[.]/g, "").trim().toLowerCase();
       setSearchTerm(cleanText); 
     };
     recognition.start();
   };
 
-  // --- 🔊 SPEAK STATUS LOGIC (WITH REAL-TIME OFFERS) ---
+  // --- 🔊 SPEAK STATUS LOGIC IN NATURAL HINDI ---
   const speakStatus = (e, shopName, category, isOpen, offers) => {
     e.preventDefault(); 
     e.stopPropagation(); 
     if ('speechSynthesis' in window) {
+      // 📝 Ekdam natural rural dialect text output
       let statusText = isOpen 
-        ? `The shop named ${shopName}, which is a ${category} store, is currently open. ` 
-        : `The shop named ${shopName}, which is a ${category} store, is currently closed. `;
+        ? `${shopName} की दुकान, जो कि एक ${category} की दुकान है, इस समय खुली है। ` 
+        : `${shopName} की दुकान, जो कि एक ${category} की दुकान है, इस समय बंद है। `;
       
       if (offers?.isActive && offers?.discountText) {
-        statusText += `Special deal active right now! They are offering ${offers.discountText}. ${offers.description || ''}`;
+        statusText += `इस दुकान पर अभी एक विशेष ऑफर चल रहा है! आपको मिल रहा है ${offers.discountText} का डिस्काउंट। ${offers.description || ''}`;
       }
       
       const utterance = new SpeechSynthesisUtterance(statusText);
-      utterance.lang = 'en-IN'; 
-      utterance.rate = 0.9;
+      utterance.lang = 'hi-IN'; // Clear Indian Hindi text-to-speech voice
+      utterance.rate = 0.95; // Steady rate for clear understanding
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(utterance);
     }
@@ -99,12 +101,12 @@ export default function Home() {
   const handleDelete = async (e, id) => {
     e.preventDefault(); 
     e.stopPropagation();
-    if (window.confirm("Are you sure you want to delete this shop?")) {
+    if (window.confirm("क्या आप वाकई इस दुकान को हटाना चाहते हैं?")) {
       try {
         await API.delete(`/shops/${id}`);
         setShops(shops.filter(shop => shop._id !== id));
       } catch (err) {
-        alert("Failed to delete.");
+        alert("हटाने में विफलता हुई।");
       }
     }
   };
@@ -166,18 +168,18 @@ export default function Home() {
       <div className="max-w-5xl mx-auto px-2 mt-6">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-200/50 p-2 rounded-2xl border border-white/40 backdrop-blur-sm shadow-inner">
           <div className="bg-white/90 p-5 rounded-xl flex flex-col items-center justify-center border border-white shadow-[0_4px_10px_rgba(0,0,0,0.02)] transition-all duration-200 hover:shadow-md">
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Shops</p>
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">कुल दुकानें (Total)</p>
             <h3 className="text-3xl font-black text-slate-900 tracking-tight">{totalShops}</h3>
           </div>
           <div className="bg-white/90 p-5 rounded-xl flex flex-col items-center justify-center border border-white shadow-[0_4px_10px_rgba(0,0,0,0.02)] transition-all duration-200 hover:border-emerald-400 hover:shadow-md">
             <div className="flex items-center gap-1.5 mb-1">
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-              <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Open Now</p>
+              <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">अभी खुली हैं</p>
             </div>
             <h3 className="text-3xl font-black text-emerald-600 tracking-tight">{openShops}</h3>
           </div>
           <div className="bg-white/90 p-5 rounded-xl flex flex-col items-center justify-center border border-white shadow-[0_4px_10px_rgba(0,0,0,0.02)] transition-all duration-200 hover:border-rose-400 hover:shadow-md">
-            <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-1">Closed Units</p>
+            <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-1">अभी बंद हैं</p>
             <h3 className="text-3xl font-black text-rose-600 tracking-tight">{closedShops}</h3>
           </div>
         </div>
@@ -189,14 +191,14 @@ export default function Home() {
           <input 
             type="text" 
             value={searchTerm}
-            placeholder="Type store name or category to filter instantly..." 
+            placeholder="दुकान का नाम या श्रेणी यहाँ खोजें..." 
             className="w-full bg-transparent text-slate-900 px-5 py-4 focus:outline-none font-bold placeholder:text-slate-400 text-sm"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <button 
             onClick={startVoiceSearch} 
             className={`mr-3 p-2.5 rounded-xl text-sm font-bold transition-all ${isListening ? 'bg-rose-500 text-white shadow-lg animate-pulse' : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/60'}`}
-            title="Voice Search"
+            title="बोलकर खोजें (Hindi Voice Search)"
           >
             🎤
           </button>
@@ -218,7 +220,7 @@ export default function Home() {
               {filteredShops.map((shop) => {
                 const isOfferActive = shop.offers?.isActive && shop.offers?.discountText;
 
-                // 🛠️ LIVE ON-THE-FLY IMAGE URL RESOLVER
+                // 🛠️ LIVE PRODUCTION IMAGE URL RESOLVER
                 let finalImageUrl = "";
                 if (shop.shopImage) {
                   if (shop.shopImage.includes("localhost:5000")) {
@@ -254,7 +256,7 @@ export default function Home() {
                       <div className="flex items-center gap-1.5 bg-white/90 border border-slate-200 shadow-sm px-2.5 py-1 rounded-lg pointer-events-auto">
                         <div className={`w-2 h-2 rounded-full ${shop.isOpen ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></div>
                         <span className={`text-[10px] font-black uppercase tracking-wider ${shop.isOpen ? 'text-emerald-700' : 'text-rose-700'}`}>
-                          {shop.isOpen ? "Active Open" : "Closed"}
+                          {shop.isOpen ? "खुली है" : "बंद है"}
                         </span>
                       </div>
 
@@ -272,7 +274,7 @@ export default function Home() {
                           onClick={(e) => speakStatus(e, shop.shopName, shop.category, shop.isOpen, shop.offers)}
                           className="p-1.5 rounded-lg bg-blue-50/90 text-blue-600 border border-blue-200/50 hover:bg-blue-600 hover:text-white transition-all duration-200 text-xs flex items-center gap-1 font-black shadow-sm"
                         >
-                          <span>🔊</span> <span className="text-[9px] uppercase tracking-widest hidden sm:inline">Suniye</span>
+                          <span>🔊</span> <span className="text-[9px] uppercase tracking-widest hidden sm:inline">सुनिए</span>
                         </button>
                       </div>
                     </div>
@@ -295,7 +297,6 @@ export default function Home() {
                             alt={shop.shopName} 
                             className="w-full h-full object-cover"
                             onError={(e) => {
-                              // If image fails, fallback to rendering the category icon text dynamically
                               e.target.style.display = 'none';
                               e.target.parentNode.innerHTML = getCategoryIcon(shop.category);
                             }}
@@ -320,9 +321,9 @@ export default function Home() {
                         <div className="w-full mt-4 p-2.5 bg-gradient-to-r from-amber-500/5 to-orange-500/5 border border-amber-500/20 rounded-xl text-left flex items-start gap-2 shadow-inner">
                           <span className="text-sm mt-0.5 animate-bounce">📢</span>
                           <div className="truncate">
-                            <p className="text-[9px] font-black text-amber-800 uppercase tracking-wide">Special Deal Running</p>
+                            <p className="text-[9px] font-black text-amber-800 uppercase tracking-wide">विशेष ऑफर चालू है</p>
                             <p className="text-[11px] font-bold text-slate-700 truncate mt-0.5">
-                              {shop.offers.description || 'Hurry! Limited time store discount active.'}
+                              {shop.offers.description || 'जल्दी करें! सीमित समय के लिए विशेष छूट उपलब्ध है।'}
                             </p>
                           </div>
                         </div>
@@ -335,7 +336,7 @@ export default function Home() {
                         <div className="bg-gradient-to-r from-slate-50 to-white p-3 rounded-xl border border-slate-200/80 shadow-[0_2px_4px_rgba(0,0,0,0.01)] flex items-center gap-3">
                           <span className="text-base bg-white p-1 rounded-md shadow-sm border border-slate-100">📞</span>
                           <div className="flex-1">
-                            <p className="text-[9px] uppercase tracking-wider text-slate-400 font-black">Contact Number</p>
+                            <p className="text-[9px] uppercase tracking-wider text-slate-400 font-black">संपर्क नंबर</p>
                             <p className="font-extrabold text-slate-900 tracking-wide select-all mt-0.5">
                               {shop.contact}
                             </p>
@@ -346,7 +347,7 @@ export default function Home() {
                         <div className="bg-gradient-to-r from-slate-50 to-white p-3 rounded-xl border border-slate-200/80 shadow-[0_2px_4px_rgba(0,0,0,0.01)] flex items-center gap-3">
                           <span className="text-base bg-white p-1 rounded-md shadow-sm border border-slate-100">📍</span>
                           <div className="flex-1">
-                            <p className="text-[9px] uppercase tracking-wider text-slate-400 font-black">Shop Location</p>
+                            <p className="text-[9px] uppercase tracking-wider text-slate-400 font-black">दुकान का पता</p>
                             <p className="font-bold text-slate-700 leading-snug mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
                               {shop.address}
                             </p>
@@ -358,7 +359,7 @@ export default function Home() {
                     {/* --- 🌟 INTERACTIVE CLICK INDICATOR BANNER FOR CUSTOMERS --- */}
                     {isCustomer && (
                       <div className="mt-auto pt-2 border-t border-slate-100 flex items-center justify-center gap-1 text-[10px] font-black text-slate-400 group-hover:text-blue-600 transition-colors uppercase tracking-widest">
-                        <span>View Catalogue</span>
+                        <span>कैटलॉग देखें (View Catalogue)</span>
                         <span className="transform group-hover:translate-x-1 transition-transform duration-200">➔</span>
                       </div>
                     )}
@@ -370,7 +371,7 @@ export default function Home() {
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/edit-shop/${shop._id}`); }} 
                           className="flex-1 py-2 bg-white/90 border border-slate-200 rounded-xl text-[10px] font-black text-slate-700 uppercase hover:bg-blue-600 hover:text-white hover:border-blue-600 shadow-sm transition-all cursor-pointer"
                         >
-                          Modify ✏️
+                          बदलाव करें ✏️
                         </button>
                         <button 
                           onClick={(e) => handleDelete(e, shop._id)} 
@@ -396,16 +397,16 @@ export default function Home() {
                  <span className="text-3xl animate-bounce">🔍</span>
               </div>
               <div className="space-y-1">
-                <h2 className="text-xl font-black text-slate-900 uppercase">No Matches Found</h2>
+                <h2 className="text-xl font-black text-slate-900 uppercase">कोई दुकान नहीं मिली</h2>
                 <p className="text-slate-500 font-bold max-w-sm mx-auto text-xs">
-                  We couldn't find any local stores matching your exact keyword.
+                  आपके द्वारा खोजा गया शब्द किसी भी दुकान या श्रेणी से मेल नहीं खाता।
                 </p>
               </div>
               <button 
                 onClick={() => setSearchTerm("")}
                 className="px-6 py-2.5 bg-blue-600 text-white border border-blue-700 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-blue-700 shadow-md transition-all"
               >
-                Reset Search Filters
+                खोज फ़िल्टर रीसेट करें
               </button>
             </motion.div>
           )}
