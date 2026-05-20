@@ -54,7 +54,6 @@ export default function Home() {
     e.preventDefault(); 
     e.stopPropagation(); 
     if ('speechSynthesis' in window) {
-      // 📝 Ekdam natural rural dialect text output
       let statusText = isOpen 
         ? `${shopName} की दुकान, जो कि एक ${category} की दुकान है, इस समय खुली है। ` 
         : `${shopName} की दुकान, जो कि एक ${category} की दुकान है, इस समय बंद है। `;
@@ -64,8 +63,8 @@ export default function Home() {
       }
       
       const utterance = new SpeechSynthesisUtterance(statusText);
-      utterance.lang = 'hi-IN'; // Clear Indian Hindi text-to-speech voice
-      utterance.rate = 0.95; // Steady rate for clear understanding
+      utterance.lang = 'hi-IN'; 
+      utterance.rate = 0.95; 
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(utterance);
     }
@@ -86,12 +85,38 @@ export default function Home() {
     fetchShops();
   }, []);
 
+  // --- 🎯 SMART HINGLISH SEARCH FILTER LOGIC ---
   const filteredShops = shops.filter((shop) => {
     if (!searchTerm.trim()) return true;
+    
     const searchLower = searchTerm.toLowerCase().trim();
-    const nameMatch = shop.shopName.toLowerCase().includes(searchLower);
-    const categoryMatch = shop.category.toLowerCase().includes(searchLower);
-    return nameMatch || categoryMatch;
+    const shopName = shop.shopName.toLowerCase();
+    const category = shop.category.toLowerCase();
+
+    // 1. Direct match check (Aapka current code logic)
+    const directMatch = shopName.includes(searchLower) || category.includes(searchLower);
+    if (directMatch) return true;
+
+    // 2. Hinglish cross-mapping dictionary
+    // Agar user voice se kuch rural word bolta hai toh hum use automatically database terms se map kar denge
+    const hinglishMap = {
+      'kirana': ['किराना', 'grocery', 'rashan', 'ration', 'store', 'दुकान'],
+      'grocery': ['kirana', 'किराना', 'rashan', 'perchuni'],
+      'medical': ['मेडिकल', 'medicine', 'dawai', 'doctor', 'दवाई', 'अस्पताल'],
+      'medicine': ['medical', 'dawai', 'दवाई'],
+      'salon': ['नाई', 'barber', 'parlour', 'bal', 'बाल'],
+      'electronic': ['bijli', 'बिजली', 'mobile', 'light', 'पंखा'],
+      'garment': ['kapde', 'cloth', 'कपड़े', 'suit']
+    };
+
+    // Check if any keyword matches the map context
+    return Object.keys(hinglishMap).some((key) => {
+      // Kya user ka search word ya fir shop ka category/name is mapped context se match hota hai?
+      const isSearchInContext = searchLower.includes(key) || hinglishMap[key].some(syn => searchLower.includes(syn));
+      const isShopInContext = category.includes(key) || hinglishMap[key].some(syn => category.includes(syn));
+      
+      return isSearchInContext && isShopInContext;
+    });
   });
 
   const totalShops = filteredShops.length;
@@ -112,9 +137,7 @@ export default function Home() {
   };
 
   const handleCardClick = (shopId) => {
-    if (isAdmin || isShopkeeper) {
-      return; 
-    }
+    if (isAdmin || isShopkeeper) return; 
     navigate(`/shop/${shopId}`);
   };
 
@@ -198,7 +221,7 @@ export default function Home() {
           <button 
             onClick={startVoiceSearch} 
             className={`mr-3 p-2.5 rounded-xl text-sm font-bold transition-all ${isListening ? 'bg-rose-500 text-white shadow-lg animate-pulse' : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/60'}`}
-            title="बोलकर खोजें (Hindi Voice Search)"
+            title="बोलकर खोजें (Hinglish/Hindi Voice Search)"
           >
             🎤
           </button>
@@ -220,7 +243,6 @@ export default function Home() {
               {filteredShops.map((shop) => {
                 const isOfferActive = shop.offers?.isActive && shop.offers?.discountText;
 
-                // 🛠️ LIVE PRODUCTION IMAGE URL RESOLVER
                 let finalImageUrl = "";
                 if (shop.shopImage) {
                   if (shop.shopImage.includes("localhost:5000")) {
@@ -243,16 +265,11 @@ export default function Home() {
                         : 'cursor-pointer hover:shadow-[0_22px_45px_rgba(37,99,235,0.15)] hover:border-blue-300 hover:-translate-y-2'
                     } ${isOfferActive ? 'ring-2 ring-amber-500/30' : ''}`}
                   >
-                    
-                    {/* ✨ SHINE GLOSS OVERLAY EFFECT ON HOVER */}
                     {isCustomer && (
                       <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none z-10" />
                     )}
 
-                    {/* --- 🛠️ HEADER ACTIONS CONTAINER --- */}
                     <div className="absolute top-4 inset-x-4 flex items-center justify-between z-30 pointer-events-none">
-                      
-                      {/* 🟢/🔴 STATUS BADGE */}
                       <div className="flex items-center gap-1.5 bg-white/90 border border-slate-200 shadow-sm px-2.5 py-1 rounded-lg pointer-events-auto">
                         <div className={`w-2 h-2 rounded-full ${shop.isOpen ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></div>
                         <span className={`text-[10px] font-black uppercase tracking-wider ${shop.isOpen ? 'text-emerald-700' : 'text-rose-700'}`}>
@@ -260,16 +277,13 @@ export default function Home() {
                         </span>
                       </div>
 
-                      {/* RIGHT SIDE BADGES CONTAINER */}
                       <div className="flex items-center gap-2 pointer-events-auto">
-                        {/* 🔥 BALANCED DYNAMIC OFFER CHIP */}
                         {isOfferActive && (
                           <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] font-black uppercase tracking-wider px-2.5 py-1.5 rounded-lg shadow-md shadow-orange-500/10 animate-pulse">
                             ★ {shop.offers.discountText}
                           </div>
                         )}
 
-                        {/* 🔊 AUDIO SPEAKER */}
                         <button 
                           onClick={(e) => speakStatus(e, shop.shopName, shop.category, shop.isOpen, shop.offers)}
                           className="p-1.5 rounded-lg bg-blue-50/90 text-blue-600 border border-blue-200/50 hover:bg-blue-600 hover:text-white transition-all duration-200 text-xs flex items-center gap-1 font-black shadow-sm"
@@ -279,17 +293,13 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* ⚙️ MANAGEMENT MODE BADGE */}
                     {(isAdmin || isShopkeeper) && (
                       <div className="absolute top-[46px] left-4 z-30 bg-slate-100 border border-slate-200 text-slate-500 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md">
                         Dashboard Only ⚙️
                       </div>
                     )}
 
-                    {/* 🛍️ CORE CONTENT AREA */}
                     <div className="mt-2 flex flex-col items-center text-center flex-grow relative z-20"> 
-                      
-                      {/* IMAGE WITH SPECULAR GLOW BORDER */}
                       <div className={`w-24 h-24 bg-gradient-to-b from-white to-slate-100 border-2 border-white rounded-full flex items-center justify-center text-4xl shadow-[0_4px_12px_rgba(0,0,0,0.08),_inset_0_2px_4px_rgba(0,0,0,0.06)] overflow-hidden transition-transform duration-300 ${isCustomer && 'group-hover:scale-105'} ${isOfferActive ? 'ring-4 ring-amber-500/20' : ''}`}>
                         {finalImageUrl ? (
                           <img 
@@ -306,17 +316,14 @@ export default function Home() {
                         )}
                       </div>
 
-                      {/* SHOP NAME */}
                       <h3 className={`text-base font-black text-slate-900 mt-4 leading-tight tracking-tight uppercase transition-colors ${isCustomer && 'group-hover:text-blue-600'}`}>
                         {shop.shopName}
                       </h3>
                       
-                      {/* CATEGORY TAG */}
                       <p className="text-blue-700 font-extrabold text-[9px] mt-1.5 bg-blue-50 border border-blue-200/60 px-2.5 py-0.5 rounded-full uppercase tracking-widest shadow-sm">
                         {shop.category}
                       </p>
 
-                      {/* 📢 BOTTOM PROMOTIONAL LOUDSPEAKER BANNER BOX */}
                       {isOfferActive && (
                         <div className="w-full mt-4 p-2.5 bg-gradient-to-r from-amber-500/5 to-orange-500/5 border border-amber-500/20 rounded-xl text-left flex items-start gap-2 shadow-inner">
                           <span className="text-sm mt-0.5 animate-bounce">📢</span>
@@ -329,10 +336,7 @@ export default function Home() {
                         </div>
                       )}
                       
-                      {/* 📞 📍 INFO CONTAINERS */}
                       <div className="w-full mt-4 space-y-2.5 text-left text-xs mb-4">
-                        
-                        {/* Phone Box */}
                         <div className="bg-gradient-to-r from-slate-50 to-white p-3 rounded-xl border border-slate-200/80 shadow-[0_2px_4px_rgba(0,0,0,0.01)] flex items-center gap-3">
                           <span className="text-base bg-white p-1 rounded-md shadow-sm border border-slate-100">📞</span>
                           <div className="flex-1">
@@ -343,7 +347,6 @@ export default function Home() {
                           </div>
                         </div>
 
-                        {/* Address Box */}
                         <div className="bg-gradient-to-r from-slate-50 to-white p-3 rounded-xl border border-slate-200/80 shadow-[0_2px_4px_rgba(0,0,0,0.01)] flex items-center gap-3">
                           <span className="text-base bg-white p-1 rounded-md shadow-sm border border-slate-100">📍</span>
                           <div className="flex-1">
@@ -356,7 +359,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* --- 🌟 INTERACTIVE CLICK INDICATOR BANNER FOR CUSTOMERS --- */}
                     {isCustomer && (
                       <div className="mt-auto pt-2 border-t border-slate-100 flex items-center justify-center gap-1 text-[10px] font-black text-slate-400 group-hover:text-blue-600 transition-colors uppercase tracking-widest">
                         <span>कैटलॉग देखें (View Catalogue)</span>
@@ -364,7 +366,6 @@ export default function Home() {
                       </div>
                     )}
 
-                    {/* ADMIN CONTROL PANEL ACTION BUTTONS */}
                     {isAdmin && (
                       <div className="mt-auto flex gap-2 z-50 relative pt-1">
                         <button 
