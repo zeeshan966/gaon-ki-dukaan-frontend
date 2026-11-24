@@ -33,5 +33,26 @@ body {
   color: white;
   margin: 0;
   font-family: 'Inter', sans-serif;
-  overflow-x: hidden; /* Taaki marquee screen se bahar na nikal jaye */
+  overflow-x: hidden; /* Prevent the marquee from extending beyond the screen. */
+}
+
+/* Keep form-entered text consistent across every form in the application. */
+input:not([type='checkbox']):not([type='radio']):not([type='button']):not([type='submit']),
+textarea,
+select {
+  color: #000000 !important;
+  font-weight: 700 !important;
+  -webkit-text-fill-color: #000000;
+}
+
+input:not([type='checkbox']):not([type='radio'])::placeholder,
+textarea::placeholder {
+  color: #000000 !important;
+  font-weight: 700;
+  opacity: 0.65;
+}
+
+input[type='file'] {
+  color: #000000;
+  font-weight: 700;
 }
