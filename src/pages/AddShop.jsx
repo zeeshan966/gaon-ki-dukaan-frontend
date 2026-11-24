@@ -12,7 +12,7 @@ export default function AddShop() {
     contact: ''
   });
 
-  // 📸 State photo file aur live image preview handler ke liye
+  // Handle the selected photo file and generate a live image preview.
   const [shopImage, setShopImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
   const [loading, setLoading] = useState(false);
@@ -97,7 +97,7 @@ export default function AddShop() {
               <label className={labelStyle}>Shop Designation</label>
               <div className="relative overflow-hidden rounded-xl">
                 <input 
-                  type="text" required placeholder="Sharma Kirana Store" className={inputStyle}
+                  type="text" required placeholder="Sharma Grocery Store" className={inputStyle}
                   onChange={(e) => setFormData({...formData, shopName: e.target.value})}
                 />
                 <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-blue-600 transition-all duration-500 group-focus-within:w-full"></div>

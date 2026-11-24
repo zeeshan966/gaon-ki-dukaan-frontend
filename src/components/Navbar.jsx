@@ -17,7 +17,7 @@ export default function Navbar() {
   };
 
   // --- THE MODERN SOLID 3D WHITE-CONTEXT BUTTON STYLE ---
-  // Mobile par elements balanced rahein isliye px aur gap ko optimize kiya gaya hai
+  // Keep mobile navigation elements evenly balanced by optimizing spacing and padding.
   const heavyBtn = `
     relative group overflow-hidden 
     px-2 py-1.5 md:px-5 md:py-2.5 

@@ -37,7 +37,7 @@ export default function EditShop() {
     fetchShopData();
   }, [id]);
 
-  // 2. Input Handle (Checkbox ke liye special logic)
+  // 2. Handle form input values, including the availability checkbox.
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({ 
@@ -136,7 +136,7 @@ export default function EditShop() {
                 name="category" value={formData.category} onChange={handleChange} required 
                 className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3.5 text-slate-800 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-500/5 transition-all shadow-sm font-medium text-sm appearance-none cursor-pointer"
               >
-                <option value="Kirana">Kirana</option>
+                <option value="Kirana">Grocery</option>
                 <option value="Medical">Medical</option>
                 <option value="Salon">Salon/Parlour</option>
                 <option value="Electronic">Electronic</option>

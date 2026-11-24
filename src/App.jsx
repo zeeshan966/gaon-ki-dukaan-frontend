@@ -79,19 +79,54 @@ function App() {
           </Routes>
         </main>
 
-        {/* --- PREMIUM LIGHT FOOTER --- */}
-        <footer className="border-t border-slate-200/80 py-10 bg-white/40 backdrop-blur-md">
-          <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="text-center sm:text-left">
-              <h2 className="text-lg font-black italic tracking-tighter text-slate-900 uppercase">
-                GAON <span className="text-blue-600">SHOP</span> STATUS<span className="text-blue-600">.</span>
-              </h2>
-              <p className="text-slate-400 text-[10px] font-black uppercase tracking-[2px] mt-0.5">
-                Connecting villages to digital reality
-              </p>
+        {/* --- MULTI-COLUMN FAT FOOTER --- */}
+        <footer className="border-t border-slate-200/80 bg-white/60 backdrop-blur-md">
+          <div className="max-w-7xl mx-auto px-6 pt-12 pb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+              <div className="sm:col-span-2 lg:col-span-1">
+                <h2 className="text-xl font-black italic tracking-tighter text-slate-900 uppercase">
+                  GAON <span className="text-blue-600">SHOP</span> STATUS<span className="text-blue-600">.</span>
+                </h2>
+                <p className="mt-3 max-w-xs text-sm leading-6 text-slate-500">
+                  Connecting local communities with accurate, real-time shop availability.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-900">Explore</h3>
+                <div className="mt-4 flex flex-col gap-3 text-sm font-bold text-slate-500">
+                  <a href="/" className="hover:text-blue-600 transition-colors">Home</a>
+                  <a href="/about" className="hover:text-blue-600 transition-colors">About Us</a>
+                  <a href="/login" className="hover:text-blue-600 transition-colors">Sign In</a>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-900">For Businesses</h3>
+                <div className="mt-4 flex flex-col gap-3 text-sm font-bold text-slate-500">
+                  <a href="/login" className="hover:text-blue-600 transition-colors">Shopkeeper Login</a>
+                  <a href="/login" className="hover:text-blue-600 transition-colors">Admin Access</a>
+                  <a href="/dashboard" className="hover:text-blue-600 transition-colors">Shop Dashboard</a>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-900">Platform</h3>
+                <div className="mt-4 flex flex-col gap-3 text-sm font-bold text-slate-500">
+                  <span>Live Shop Status</span>
+                  <span>Digital Catalogues</span>
+                  <span>Community Updates</span>
+                </div>
+              </div>
             </div>
-            <div className="text-slate-400 text-[9px] font-black uppercase tracking-[2.5px] bg-slate-50 border border-slate-200 px-4 py-1.5 rounded-xl shadow-sm">
-              &copy; 2026 | Built for the community ⚡
+
+            <div className="mt-10 pt-6 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+                &copy; 2026 Gaon Shop Status
+              </p>
+              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+                Built for the community ⚡
+              </p>
             </div>
           </div>
         </footer>

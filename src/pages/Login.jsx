@@ -8,16 +8,16 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 1. Navbar se bheji gayi targetRole catch karo (Fallback to shopkeeper if direct link visit)
+  // 1. Read the target role passed by the navbar (default to shopkeeper for direct visits).
   const targetRole = location.state?.targetRole || 'shopkeeper';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Backend ko clear information ke liye base parameters wrap kiye hain
+      // Send the login credentials to the authentication endpoint.
       const { data } = await API.post('/auth/login', { email, password });
       
-      // Token aur User data save karo
+      // Save the token and user data.
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       

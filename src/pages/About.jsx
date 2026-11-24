@@ -154,7 +154,7 @@ const About = () => {
 
         <footer className="text-center pb-6 border-t border-slate-300/60 pt-8">
           <p className="text-[9px] font-black uppercase tracking-[12px] text-slate-400">
-            Internal Documentation // GAON KEE DUKAAN // 2026
+            Internal Documentation // GAON SHOP STATUS // 2026
           </p>
         </footer>
 

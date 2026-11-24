@@ -9,13 +9,13 @@ const categoryConfigs = {
   grocery: {
     units: ['kg', 'gm', 'packet', 'piece', 'litre'],
     defaultUnit: 'kg',
-    placeholder: 'e.g. Loose Sugar (Chini) or Fortune Oil',
+    placeholder: 'e.g. Loose Sugar or Cooking Oil',
     priceLabel: 'Asset Price Per Unit/Kg (INR)'
   },
   kirana: {
     units: ['kg', 'gm', 'packet', 'piece', 'litre'],
     defaultUnit: 'kg',
-    placeholder: 'e.g. Loose Sugar (Chini) or Fortune Oil',
+    placeholder: 'e.g. Loose Sugar or Cooking Oil',
     priceLabel: 'Asset Price Per Unit/Kg (INR)'
   },
   medical: {

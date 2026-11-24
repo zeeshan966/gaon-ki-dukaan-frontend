@@ -137,7 +137,7 @@ export default function ShopDetail() {
                 {shop.offers.discountText || "SPECIAL DISCOUNT OFFER LIVE!"}
               </h4>
               <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                {shop.offers.description || "Dukan par bhaari chut chal rahi hai, jaldi loot lo!"}
+                {shop.offers.description || "A special offer is currently available!"}
               </p>
             </div>
           </motion.div>
@@ -246,7 +246,7 @@ export default function ShopDetail() {
                 className="text-center py-16 bg-white/40 rounded-[2.5rem] border border-dashed border-slate-200"
               >
                 <FaBoxOpen className="mx-auto text-slate-300 mb-3" size={36} />
-                <p className="text-slate-400 text-[9px] font-black uppercase tracking-[0.25em]">Oops! Item nahi mila</p>
+                <p className="text-slate-400 text-[9px] font-black uppercase tracking-[0.25em]">No matching item found</p>
               </motion.div>
             )}
           </AnimatePresence>

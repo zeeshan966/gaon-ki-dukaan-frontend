@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL: 'https://gaon-ki-dukaan-backend.onrender.com/api', // Aapka backend URL
+    baseURL: 'https://gaon-ki-dukaan-backend.onrender.com/api', // Backend API URL
 });
 
-// Agar localStorage mein token hai, to har request mein bhej do
+// Send the token with every request when it is available in local storage.
 API.interceptors.request.use((req) => {
     const token = localStorage.getItem('token');
     if (token) {

@@ -114,7 +114,7 @@ export default function ShopkeeperDashboard() {
           Owner ID: <span className="text-slate-700 font-bold">{user?.id || 'N/A'}</span>
         </div>
         <p className="text-slate-400 text-xs font-medium leading-relaxed">
-          Aapka account kisi registered shop ke sath connected nahi hai. Please system admin se contact karein.
+          Your account is not connected to a registered shop. Please contact the system administrator.
         </p>
       </div>
     </div>
