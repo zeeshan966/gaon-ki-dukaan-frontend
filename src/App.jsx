@@ -13,6 +13,7 @@ import About from './pages/About.jsx'; // About Us Page Route
 
 function App() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const timeOptions = { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit' };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -51,13 +52,13 @@ function App() {
                   {isAdmin ? `Admin: ${user.name}` : `Shopkeeper: ${user.name}`} ⚡
                 </span>
                 <span className="text-sm font-mono font-black text-slate-800 mt-0.5">
-                  {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                  {currentTime.toLocaleTimeString([], timeOptions)}
                 </span>
               </div>
             ) : (
               <div className="flex flex-col items-end">
                 <span className="text-base font-black italic tracking-tighter font-mono text-blue-600">
-                  {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                  {currentTime.toLocaleTimeString([], timeOptions)}
                 </span>
                 <span className="text-[7px] font-black uppercase tracking-[3px] text-slate-400 mt-0.5">LIVE TIME FEED</span>
               </div>
